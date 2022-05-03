@@ -1,0 +1,88 @@
+
+// list element markers
+::marker {
+    font-weight: 600;
+}
+
+
+.title {
+    font-size: 6em;
+    font-weight: 800;
+    // border-bottom: 3px solid;
+    // border-image: linear-gradient(to right, red, rgba(0, 0, 0, 0)) 1 100%;
+    position: relative;
+
+    &:after {
+        content: "";
+        background: -webkit-linear-gradient(left, var(--main-bg) 0%, var(--main-fg) 50%, var(--main-bg) 100%);
+        display: block;
+        height: 3px;
+        width: 100%;
+        position: absolute;
+        bottom: -3px;
+    }
+}
+
+.codeSnippet {
+    background-color: #282c34;
+    color: #abb2bf;
+    padding: 0.5em;
+    border: 1px solid #00000030;
+    border-radius: 5px;
+    font-family: SFMono-Regular, Consolas, "Fira-Mono", monospace;
+    min-height: 40px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    white-space: var(--code-white-space);
+    font-size: 14px;
+    line-height: 1.5;
+    position: static;
+    .snippetCollapser {
+        display: none;
+    }
+    &:hover {
+        .snippetCollapser {
+            display: inline;
+        }
+    }
+    &::-webkit-scrollbar {
+        width: 12px;
+        height: 12px;
+    }
+    &::-webkit-scrollbar-track {
+        background-color: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+        background-color: rgba(
+            var(--code-scrollbar-color),
+            var(--code-scrollbar-color),
+            var(--code-scrollbar-color),
+            var(--code-scrollbar-opacity)
+        );
+        border: 4px solid rgba(0, 0, 0, 0);
+        background-clip: padding-box;
+        &:hover {
+            background-color: rgba(
+                var(--code-scrollbar-color),
+                var(--code-scrollbar-color),
+                var(--code-scrollbar-color),
+                calc(var(--code-scrollbar-opacity) + 0.2)
+            );
+        }
+    }
+}
+.inline-code {
+    font-size: 13px;
+    font-weight: 600;
+    padding-top: 2px !important;
+    padding-bottom: 2px !important;
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+    border: 1px solid #00000030;
+    border-radius: 4px;
+    font-family: SFMono-Regular, Consolas, "Fira-Mono", monospace;
+    word-wrap: break-word;
+    display: inline !important;
+    background: white;
+    color: #333333;
+}

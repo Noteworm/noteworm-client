@@ -16,9 +16,6 @@ import * as semver from "semver";
 import * as remote from "@electron/remote/main";
 import * as contextMenu from "electron-context-menu";
 
-// This makes sure we get a non-cached verison of the "latestversion.txt" file for the update check
-app.commandLine.appendSwitch("disable-http-cache");
-
 const currentVersion = "1.0.0"; // VERSION CHANGE NOTICE
 let mainWindow: BrowserWindow = null;
 const gotTheLock = app.requestSingleInstanceLock();
@@ -104,7 +101,7 @@ function createWindow() {
 
 	mainWindow.webContents.once("dom-ready", () => {
 		mainWindow.show();
-		checkForUpdates();
+		// checkForUpdates(); // can also be forced in settings screen
 	});
 
 	mainWindow.on("close", (e) => {
@@ -127,8 +124,11 @@ function createWindow() {
 // https://www.npmjs.com/package/electron-auto-Update
 // https://www.electronjs.org/docs/latest/api/auto-updater
 function checkForUpdates(): void {
+	// This makes sure we get a non-cached verison of the "latestversion.txt" file for the update check
+	app.commandLine.appendSwitch("disable-http-cache");
+
 	try {
-		const request = net.request("https://jcv8000.github.io/codex/latestversion.txt");
+		const request = net.request("https://Noteworm.github.io/internal/latestversion.txt");
 		request.on("response", (response) => {
 			response.on("data", (chunk) => {
 				const onlineVersion = validator.escape(chunk.toString());
@@ -139,17 +139,19 @@ function checkForUpdates(): void {
 					);
 					// Check if online version # is greater than current version
 					if (semver.compare(currentVersion, onlineVersion) == -1) {
-						mainWindow.webContents.send("updateAvailable", onlineVersion);
+						mainWindow.webContents.send("updateChecked", onlineVersion);
+					} else {
+						mainWindow.webContents.send("updateChecked");
 					}
 				} else {
-					errorPoup("Failed to check for updates", "Response body was not a valid version number.");
+					errorPopup("Failed to check for updates", "Response body was not a valid version number.");
 				}
 			});
 			response.on("aborted", () => {
-				errorPoup("Net request aborted while trying to check for updates", "");
+				errorPopup("Net request aborted while trying to check for updates", "");
 			});
 			response.on("error", (error: Error) => {
-				errorPoup("Failed to check for updates", error.toString());
+				errorPopup("Failed to check for updates", error.toString());
 			});
 		});
 
@@ -160,14 +162,16 @@ function checkForUpdates(): void {
 		request.end();
 
 		request.on("error", (err) => {
-			errorPoup("Failed to check for updates", err.toString());
+			errorPopup("Failed to check for updates", err.toString());
 		});
 	} catch (err) {
-		errorPoup("Failed to check for updates", err.toString());
+		errorPopup("Failed to check for updates", err.toString());
+	} finally {
+		app.commandLine.removeSwitch("disable-http-cache");
 	}
 }
 
-function errorPoup(mes: string, det: string) {
+function errorPopup(mes: string, det: string) {
 	const options: MessageBoxOptions = {
 		type: "error",
 		buttons: ["Ok"],
@@ -184,14 +188,14 @@ function errorPoup(mes: string, det: string) {
 
 function executeJavascriptInRenderer(js: string): void {
 	mainWindow.webContents.executeJavaScript(js + ";0").catch((reason) => {
-		errorPoup("Error executing javascript in renderer process", reason.toString());
+		errorPopup("Error executing javascript in renderer process", reason.toString());
 	});
 }
 
 function openAboutWindow(): void {
 	const about = new BrowserWindow({
 		width: 680,
-		height: 380,
+		height: 450,
 		resizable: false,
 		webPreferences: {
 			preload: __dirname + "/about_preload.js"
@@ -445,22 +449,22 @@ editingMenu.append(
 if (process.platform === "linux") {
 	normalMenu.items[1].submenu.append(
 		new MenuItem({
-			label: "Toggle Menu Bar",
+			label: "Toggle Side Bar",
 			click: () => {
 				const current = mainWindow.isMenuBarVisible();
 				mainWindow.setMenuBarVisibility(!current);
-				mainWindow.webContents.send("prefsShowMenuBar", !current);
+				mainWindow.webContents.send("prefsShowSideBar", !current);
 			},
 			accelerator: "Ctrl+M"
 		})
 	);
 	editingMenu.items[2].submenu.append(
 		new MenuItem({
-			label: "Toggle Menu Bar",
+			label: "Toggle Side Bar",
 			click: () => {
 				const current = mainWindow.isMenuBarVisible();
 				mainWindow.setMenuBarVisibility(!current);
-				mainWindow.webContents.send("prefsShowMenuBar", !current);
+				mainWindow.webContents.send("prefsShowSideBar", !current);
 			},
 			accelerator: "Ctrl+M"
 		})
@@ -472,7 +476,7 @@ if (process.platform === "linux") {
 */
 
 ipcMain.on("errorPopup", (event, args: string[]) => {
-	errorPoup(args[0], args[1]);
+	errorPopup(args[0], args[1]);
 });
 
 ipcMain.on("setNativeThemeSource", (event, value: string) => {
@@ -522,6 +526,10 @@ ipcMain.on("nativeThemeShouldUseDarkColors", (event) => {
 
 ipcMain.on("openAboutWindow", () => {
 	openAboutWindow();
+});
+
+ipcMain.on("checkForUpdates", () => {
+	checkForUpdates();
 });
 
 ipcMain.on("errorLoadingData", (e, text: string) => {

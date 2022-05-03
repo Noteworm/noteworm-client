@@ -1,73 +1,104 @@
 <!doctype html>
 <html lang="en" style="height: 100%">
 
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self' 'unsafe-inline'; img-src 'self' https://* http://* data: 'unsafe-eval';">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Noteworm</title>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="Content-Security-Policy"
+              content="default-src 'self' 'unsafe-inline'; img-src 'self' https://* http://* data: 'unsafe-eval';">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Noteworm</title>
 
-    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.css">
+        <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.css">
 
-    <script src="../node_modules/jquery/dist/jquery.min.js"></script>
-    <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+        <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- HIGHLIHTJS STYLES -->
-    <link id="codeStyleLink" rel="stylesheet" href="../node_modules/highlight.js/styles/atom-one-dark.css">
-    <!-- HIGHLIHTJS STYLES -->
-    <link id="codeOverlayLink" rel="stylesheet">
+        <!-- HIGHLIHTJS STYLES -->
+        <link id="codeStyleLink" rel="stylesheet" href="../node_modules/highlight.js/styles/atom-one-dark.css">
+        <!-- HIGHLIHTJS STYLES -->
+        <link id="codeOverlayLink" rel="stylesheet">
 
-    <link id="customStylesheetLink" rel="stylesheet">
-</head>
+        <link id="customStylesheetLink" rel="stylesheet">
+    </head>
 
 
-<body style="height: 100%">
+    <body style="height: 100%">
 
-    <div id="main">
-        <div id="sidebar">
-            <div id="sidebar-main" class="sidebar-section">
-                <li class="sidebar-item sidebar-link active" onclick="renderer.showScreen('Home')" data-links-to="Home">
-                    <span><i data-feather="home"></i></span>
-                    <span>Home</span>
-                </li>
-                <li class="sidebar-item sidebar-link" onclick="renderer.showScreen('About')" data-links-to="About">
-                    <span><i data-feather="help-circle"></i></span>
-                    <span>About</span>
-                </li>
+        <div id="main">
+            <div id="sidebar">
+                <div id="sidebar-main" class="sidebar-section">
+                    <li class="sidebar-item sidebar-link active" onclick="renderer.showScreen('Home')"
+                        data-links-to="Home">
+                        <span><i data-feather="home"></i></span>
+                        <span>Home</span>
+                    </li>
+                    <li class="sidebar-item sidebar-link" onclick="renderer.showScreen('Help')" data-links-to="Help">
+                        <span><i data-feather="help-circle"></i></span>
+                        <span>Help</span>
+                    </li>
+                    <li class="sidebar-item sidebar-link" onclick="renderer.showScreen('Settings')"
+                        data-links-to="Settings">
+                        <span><i data-feather="settings"></i></span>
+                        <span>Settings</span>
+                    </li>
+                    <!-- <li class="sidebar-item sidebar-link" onclick="renderer.showScreen('Account')" data-links-to="Account">
+                    <span><i data-feather="user"></i></span>
+                    <span>Account</span>
+                </li>                 -->
 
-                <li id="updateSidebarNotice" class="sidebar-item sidebar-link"
-                    onclick="renderer.api.openLink('download')" style="display:none;">
-                    <span><i data-feather="download" style="color: #269700;"></i></span>
-                    <span id="updateBlockText">New update available</span>
-                </li>
+                    <li id="updateSidebarNotice" class="sidebar-item sidebar-link"
+                        onclick="renderer.api.openLink('download')" style="display:none;">
+                        <span id="updateIconContainer"><i data-feather="download"></i></span>
+                        <span id="updateBlockText">New update available</span>
+                    </li>
+                </div>
+                <div id="sidebar-items" class="sidebar-section">
+                    <li class="sidebar-item sidebar-link" onclick="renderer.showPage('abc')" data-links-to="abc">abc
+                    </li>
+                    <li class="sidebar-item sidebar-link" onclick="renderer.showPage('unique_ID_of_page_2')"
+                        data-links-to="unique_ID_of_page_2">Page 2</li>
+                </div>
             </div>
-            <div id="sidebar-items" class="sidebar-section">
-                <li class="sidebar-item sidebar-link" onclick="renderer.showPage('abc')" data-links-to="abc">abc</li>
-                <li class="sidebar-item sidebar-link" onclick="renderer.showPage('unique_ID_of_page_2')"
-                    data-links-to="unique_ID_of_page_2">Page 2</li>
+            <div id="sidebar-toggle" onclick="renderer.toggleSidebar();"><i data-feather="chevrons-left"></i></div>
+            <div id="content" class="scroll-enabled">
+
+                <div class="screen" id="Home">
+                    <span class="title">Home</span><br />
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Thank you for using Noteworm</div>
+                        </div>
+                        <div class="card-body">
+                            If you have suggestions/feedback for Noteworm, <a href="#"
+                               onclick="renderer.api.openLink('feedback')"
+                               title="https://forms.gle/spa9b6EPwBfVs46YA">take the Google Forms survey</a>.
+                            If you have an issue/bug to report, make an Issue on the GitHub page.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="screen" id="Help">
+                    <span class="title">Help</span><br />
+                </div>
+
+                <div class="screen" id="Settings">
+                    <span class="title">Settings</span><br />
+
+                    <div class="container-content">
+                        <button class="button" onclick="renderer.api.ipcSend('checkForUpdates')">Check For
+                            Updates</button>
+                    </div>
+                </div>
+
+                <div class="screen" id="Editor">
+                    EDITOR
+                </div>
+
             </div>
         </div>
-        <div id="sidebar-toggle" onclick="renderer.toggleSidebar();"><i data-feather="arrow-left"></i></div>
-        <div id="content" class="scroll-enabled">
 
-            <div class="screen" id="Home">
-                HOME
-            </div>
-
-            <div class="screen" id="About">
-                ABOUT
-            </div>
-
-            <div class="screen" id="Editor">
-                EDITOR
-            </div>
-
-        </div>
-    </div>
-
-    <!-- NEW PAGE MODAL -->
-    <!-- <div id="newPageModal" class="modal">
+        <!-- NEW PAGE MODAL -->
+        <!-- <div id="newPageModal" class="modal">
         <div class="modal-header">
             <h5 class="modal-title" id="newItemFormTitle">New Page</h5>
             <button type="button" class="close" data-dismiss="newPageModal">
@@ -76,101 +107,101 @@
         </div>
     </div> -->
 
-    <div class="modal fade unselectable" id="newPageModal" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content shadow-lg">
-                <form id="newItemForm">
+        <div class="modal fade unselectable" id="newPageModal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content shadow-lg">
+                    <form id="newItemForm">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="newItemFormTitle">New Page</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <label class="form-label">Icon:</label>
+                            <div class="form-row mb-3">
+
+                                <div class="col-auto">
+                                    <span id="newItemIconPreview" data-feather="book"
+                                          style="width: 32px; height: 32px; vertical-align: -19px; color: black;"></span>
+                                </div>
+                                <div class="col">
+                                    <select id="newItemIconSelect" class="form-control"></select>
+                                </div>
+                                <div class="col-auto">
+                                    <input class="form-control" type="color" style="width: 50px" id="newItemColorPicker"
+                                           title="Choose color...">
+                                </div>
+                                <div class="col-auto">
+                                    <span id="newItemIconHelp" data-feather="help-circle" href="#"
+                                          onclick="renderer.api.openLink('feather')"
+                                          style="color: #9AA6B3; width: 24px; height: 24px; vertical-align: -15px; cursor: pointer;"
+                                          title="View all icons at feathericons.com"></span>
+                                </div>
+                            </div>
+                            <label class="form-label" for="newItemNameInput">Name:</label>
+                            <div class="form-row">
+                                <input class="form-control" type="text" id="newItemNameInput">
+                                <div class="invalid-feedback">
+                                    Please enter a valid name.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="mybtn" data-dismiss="modal">Cancel</button>
+                            <input type="submit" class="mybtn-primary" id="newItemSubmitButton" value="Create">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- NEW PAGE MODAL -->
+
+        <!-- WHAT'S NEW MODAL -->
+        <div class="modal fade" id="whatsNewModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content modal-lg" style="max-height: 600px;">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="newItemFormTitle">New Page</h5>
+                        <!-- VERSION CHANGE NOTICE -->
+                        <h4 class="modal-title" id="whatsNewModalTitle">What's new - Version 2.0.0</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <label class="form-label">Icon:</label>
-                        <div class="form-row mb-3">
+                        <h5>Changelog</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- WHAT'S NEW MODAL -->
 
-                            <div class="col-auto">
-                                <span id="newItemIconPreview" data-feather="book"
-                                    style="width: 32px; height: 32px; vertical-align: -19px; color: black;"></span>
-                            </div>
-                            <div class="col">
-                                <select id="newItemIconSelect" class="form-control"></select>
-                            </div>
-                            <div class="col-auto">
-                                <input class="form-control" type="color" style="width: 50px" id="newItemColorPicker"
-                                    title="Choose color...">
-                            </div>
-                            <div class="col-auto">
-                                <span id="newItemIconHelp" data-feather="help-circle" href="#"
-                                    onclick="renderer.api.openLink('feather')"
-                                    style="color: #9AA6B3; width: 24px; height: 24px; vertical-align: -15px; cursor: pointer;"
-                                    title="View all icons at feathericons.com"></span>
-                            </div>
-                        </div>
-                        <label class="form-label" for="newItemNameInput">Name:</label>
-                        <div class="form-row">
-                            <input class="form-control" type="text" id="newItemNameInput">
-                            <div class="invalid-feedback">
-                                Please enter a valid name.
-                            </div>
-                        </div>
+        <!-- NEW USER POPUP -->
+        <div class="modal fade unselectable" id="firstUseModal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content shadow-lg">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Welcome</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        It looks like this is the first time you're using Codex.<br><br>
+                        Click Continue if you would like to see a short guide about how to use Codex.
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="mybtn" data-dismiss="modal">Cancel</button>
-                        <input type="submit" class="mybtn-primary" id="newItemSubmitButton" value="Create">
+                        <button type="button" class="mybtn" data-dismiss="modal">No thanks</button>
+                        <button type="button" class="mybtn-primary" data-dismiss="modal"
+                                onclick="console.log('Implement Help thingy');">Continue</button>
                     </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    <!-- NEW PAGE MODAL -->
-
-    <!-- WHAT'S NEW MODAL -->
-    <div class="modal fade" id="whatsNewModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content modal-lg" style="max-height: 600px;">
-                <div class="modal-header">
-                    <!-- VERSION CHANGE NOTICE -->
-                    <h4 class="modal-title" id="whatsNewModalTitle">What's new - Version 2.0.0</h4> 
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <h5>Changelog</h5>
                 </div>
             </div>
         </div>
-    </div>
-    <!-- WHAT'S NEW MODAL -->
-
-    <!-- NEW USER POPUP -->
-    <div class="modal fade unselectable" id="firstUseModal" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content shadow-lg">
-                <div class="modal-header">
-                    <h5 class="modal-title">Welcome</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    It looks like this is the first time you're using Codex.<br><br>
-                    Click Continue if you would like to see a short guide about how to use Codex.
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="mybtn" data-dismiss="modal">No thanks</button>
-                    <button type="button" class="mybtn-primary" data-dismiss="modal"
-                        onclick="console.log('Implement Help thingy');">Continue</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- NEW USER POPUP -->
+        <!-- NEW USER POPUP -->
 
 
-    <script src="../out/renderer.js"></script>
-</body>
+        <script src="../out/renderer.js"></script>
+    </body>
 
 </html>

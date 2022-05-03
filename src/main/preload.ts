@@ -132,25 +132,25 @@ const api: MainAPI = {
 	): void => {
 		switch (link) {
 			case "website":
-				shell.openExternal("https://www.codexnotes.com/");
+				shell.openExternal("https://Noteworm.github.io/");
 				break;
 			case "download":
-				shell.openExternal("https://www.codexnotes.com/download/");
+				shell.openExternal("https://Noteworm.github.io/download/");
 				break;
 			case "docs":
-				shell.openExternal("https://www.codexnotes.com/docs/");
+				shell.openExternal("https://Noteworm.github.io/docs/");
 				break;
 			case "changelogs":
-				shell.openExternal("https://www.codexnotes.com/updates/");
+				shell.openExternal("https://Noteworm.github.io/updates/");
 				break;
 			case "github":
-				shell.openExternal("https://github.com/jcv8000/Codex");
+				shell.openExternal("https://github.com/Noteworm/noteworm-client");
 				break;
 			case "issues":
-				shell.openExternal("https://github.com/jcv8000/Codex/issues");
+				shell.openExternal("https://github.com/Noteworm/noteworm-client/issues");
 				break;
 			case "feedback":
-				shell.openExternal("https://forms.gle/uDLJpqLbNLcEx1F8A");
+				shell.openExternal("https://forms.gle/spa9b6EPwBfVs46YA");
 				break;
 			case "feather":
 				shell.openExternal("https://www.feathericons.com/");
@@ -250,7 +250,8 @@ if (!fs.existsSync(defaultSaveLocation + "/userStyles.css")) {
 function convertOldSave(oldSave: any): Save {
 	const newSave = new Save();
 
-	// Do something to old save
+	// check old save number
+	// add old data to newSave object
 
 	return newSave;
 }

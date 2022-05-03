@@ -1,12 +1,15 @@
 import { MainAPI } from "../main/preload";
-import * as feather from "feather-icons";
 import validatorEscape from "validator/es/lib/escape";
+import * as feather from "feather-icons";
 import { Save } from "../common/Save";
-import { NotebookItem } from "../common/NotebookItem";
+import { NotebookItem, NotebookItemSection, NotebookItemSectionType } from "../common/NotebookItem";
 import { UserPrefs } from "../common/UserPrefs";
 import { deserialize } from "typescript-json-serializer";
 
 import "./styles";
+
+// TODO: remove bootstrap requirement
+// need to make a modal thingy bob https://www.w3schools.com/howto/howto_css_modals.asp
 
 // JQuery $("") wrapper to output an error if it doesn't find an element
 function query(text: string): JQuery<HTMLElement> {
@@ -30,18 +33,7 @@ export const api: MainAPI = (window as BridgedWindow).mainAPI.api;
 
 // const defaultSaveLocation = api.defaultSaveLocation();
 
-// These prevent ctrl or middle-clicking on <a>'s causing
-// a new window to pop up
-window.addEventListener("auxclick", (event) => {
-	if (event.button === 1) {
-		event.preventDefault();
-	}
-});
-window.addEventListener("click", (event) => {
-	if (event.ctrlKey) {
-		event.preventDefault();
-	}
-});
+api.ipcSend("checkForUpdates");
 
 let prefs: UserPrefs = deserialize<UserPrefs>(api.getPrefs(), UserPrefs);
 
@@ -51,9 +43,6 @@ let currentPage: NotebookItem;
 
 console.log(prefs);
 console.log(save);
-
-// Feather icons
-feather.replace();
 
 if (api.showFirstUseModal) {
 	setTimeout(() => {
@@ -75,20 +64,19 @@ export function toggleSidebar(forceState?: boolean): void {
 	if (typeof forceState == "boolean") {
 		if (forceState) {
 			document.getElementById("sidebar").classList.add("hidden");
-			query("#sidebar-toggle").html(feather.icons["arrow-right"].toSvg());
+			query("#sidebar-toggle").html(feather.icons["chevrons-right"].toSvg());
 		} else {
 			document.getElementById("sidebar").classList.remove("hidden");
-			query("#sidebar-toggle").html(feather.icons["arrow-left"].toSvg());
+			query("#sidebar-toggle").html(feather.icons["chevrons-left"].toSvg());
 		}
 	}
 
 	if (document.getElementById("sidebar").classList.contains("hidden")) {
 		document.getElementById("sidebar").classList.remove("hidden");
-		// document.getElementById("sidebar-toggle").dataset.feather = "arrow-left";
-		query("#sidebar-toggle").html(feather.icons["arrow-left"].toSvg());
+		query("#sidebar-toggle").html(feather.icons["chevrons-left"].toSvg());
 	} else {
 		document.getElementById("sidebar").classList.add("hidden");
-		query("#sidebar-toggle").html(feather.icons["arrow-right"].toSvg());
+		query("#sidebar-toggle").html(feather.icons["chevrons-right"].toSvg());
 	}
 }
 
@@ -120,8 +108,12 @@ export function showScreen(screenName: string): void {
 
 showScreen("Home");
 
-export function showPage(pageID: string) {
+export function saveCurrentPage() {
 	// TODO: save current page;
+}
+
+export function showPage(pageID: string) {
+	saveCurrentPage();
 
 	try {
 		currentPage = deserialize<NotebookItem>(api.loadPageData(`${pageID}.json`), NotebookItem);
@@ -129,7 +121,11 @@ export function showPage(pageID: string) {
 		return errorPopup(`Notes file ${pageID} could not be parsed`, e.toString());
 	}
 
-	// TODO: populate editor screen with data from page content
+	for(const section of currentPage.content) {
+		if(section.type == NotebookItemSectionType.TEXT) {
+			// 
+		}
+	}
 	query("#Editor").text(`Editor for ${validatorEscape(currentPage.skeleton.name)}`);
 	console.log(currentPage);
 
@@ -140,10 +136,28 @@ export function showPage(pageID: string) {
 
 // #region IPC HANDLERS
 
-api.ipcHandle("updateAvailable", (event: any, newVersion: string) => {
+// api.ipcHandle("updateAvailable", (event: any, newVersion: string) => {
+// 	setTimeout(() => {
+// 		query("#updateBlockText").text(`Update available (${newVersion})`);
+// 		query("#updateIconContainer").css({ color: "yellow" }).html(feather.icons["download"].toSvg());
+// 		query("#updateSidebarNotice").fadeIn();
+// 	}, 1000);
+// });
+
+api.ipcHandle("updateChecked", (event, version) => {
 	setTimeout(() => {
-		document.getElementById("updateBlockText").textContent = `Update available (${newVersion})`;
-		query("#updateSidebarNotice").fadeIn();
+		if (version) {
+			query("#updateBlockText").text(`Update available (${version})`);
+			query("#updateIconContainer").css({ color: "yellow" }).html(feather.icons["download"].toSvg());
+			query("#updateSidebarNotice").fadeIn();
+		} else {
+			query("#updateBlockText").text("Up to Date");
+			query("#updateIconContainer").css({ color: "#269700" }).html(feather.icons["check"].toSvg());
+			query("#updateSidebarNotice").fadeIn();
+			setTimeout(() => {
+				query("#updateSidebarNotice").fadeOut();
+			}, 10 * 1000);
+		}
 	}, 1000);
 });
 
@@ -155,8 +169,8 @@ api.ipcHandle("console.error", (event: any, text: string) => {
 	console.error(text);
 });
 
-api.ipcHandle("prefsShowMenuBar", (event: any, value: boolean) => {
-	prefs.showMenuBar = value;
+api.ipcHandle("prefsShowSideBar", (event: any, value: boolean) => {
+	prefs.showSideBar = value;
 });
 
 api.ipcHandle("newNotebook", () => {
@@ -176,3 +190,16 @@ api.ipcHandle("onClose", () => {
 });
 
 // #endregion
+
+// These prevent ctrl or middle-clicking on <a>'s causing
+// a new window to pop up
+window.addEventListener("auxclick", (event) => {
+	if (event.button === 1) {
+		event.preventDefault();
+	}
+});
+window.addEventListener("click", (event) => {
+	if (event.ctrlKey) {
+		event.preventDefault();
+	}
+});

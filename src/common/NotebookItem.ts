@@ -5,7 +5,7 @@ import { v4 as GenerateUUID } from "uuid";
 export class TopLevelNotebookContainer {
 	@JsonProperty()
 	children: NotebookItemSkeleton[] = [];
-	// array of filenames for the children items
+	// array of core data for the children items
 }
 
 export enum NotebookItemSectionType {
@@ -20,6 +20,8 @@ export class NotebookItemSection {
 
 	@JsonProperty()
 	type: NotebookItemSectionType;
+
+	source: string;
 
 	constructor(type: NotebookItemSectionType) {
 		this.type = type;
@@ -40,7 +42,7 @@ export class NotebookItemSkeleton {
 
 	@JsonProperty()
 	children: NotebookItemSkeleton[] = [];
-	// array of filenames for the children items
+	// array of core data for the children items
 
 	constructor(name: string) {
 		this.name = name;

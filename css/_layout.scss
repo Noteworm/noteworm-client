@@ -1,0 +1,117 @@
+
+#main {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+#sidebar {
+    width: var(--sidebar-width);
+    max-width: var(--sidebar-width);
+    min-width: var(--sidebar-width);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    border-right: 0.2vw solid var(--main-fg);
+
+    &.hidden {
+        display: none;
+
+        // move toggle button to edge (toggle button MUST be the next element in html)
+        & + #sidebar-toggle {
+            left: 0;
+        }
+    }
+}
+
+#sidebar-toggle {
+    color: var(--main-fg);
+    position: absolute;
+    bottom: 0;
+    left: var(--sidebar-width);
+    padding: var(--sidebar-toggle-padding);
+    // border: 0.2vh solid var(--main-fg);
+    // border-left: 0;
+    // margin: var(--sidebar-toggle-margin);
+    z-index: 999;
+
+    &:hover {
+        color: var(--hover-fg);
+        background-color: var(--hover-bg);
+        cursor: pointer;
+    }
+}
+
+.sidebar-section {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    padding-left: 0;
+    margin-bottom: 0;
+    border-radius: 0.25rem;
+
+    &:not(:last-child):after {
+        content: "";
+        border-top: 0.2vh solid var(--main-fg);
+        margin-top: 0.5vh;
+        margin-bottom: 0.5vh;
+    }
+}
+
+.sidebar-item {
+    position: relative;
+    display: block;
+    padding: 0.75rem 0.3rem 0.75rem 0.5rem;
+    color: var(--main-fg);
+    background-color: var(--main-bg);
+    border: 1px solid rgba(0, 0, 0, 0.125);
+
+    // make ellipsis instead of newline or clipping text
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    span:not(:last-child) {
+        margin-right: 5px;
+    }
+}
+
+.sidebar-link {
+    &.active {
+        color: var(--accent-fg);
+        background-color: var(--accent-bg);
+    }
+
+    &:hover {
+        color: var(--hover-fg);
+        background-color: var(--hover-bg);
+        cursor: pointer;
+    }
+}
+
+#content {
+    flex-grow: 1;
+    margin: 1vw;
+    margin-left: calc(var(--sidebar-toggle-padding) * 2 + var(--sidebar-toggle-margin) * 2 + var(--feather-size));
+    margin-right: calc(var(--sidebar-toggle-padding) * 2 + var(--sidebar-toggle-margin) * 2 + var(--feather-size));
+    overflow: auto;
+    padding-bottom: 10vh;
+}
+
+.container-content{
+    margin-top: 2vh;
+}
+
+.feather {
+    width: var(--feather-size);
+    height: var(--feather-size);
+    vertical-align: -3px;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+}
