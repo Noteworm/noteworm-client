@@ -1,0 +1,23 @@
+.codeSnippet[data-name]:before {
+    content: attr(data-name);
+    display: block;
+    font-size: 13px;
+    position: absolute;
+    right: 16px;
+    padding: 2px 8px;
+    background-color: inherit;
+    filter: brightness(var(--code-overlay-bg-brightness));
+    border-radius: 5px;
+}
+
+.codeSnippet[data-name=""]:before {
+    display: none;
+}
+
+.codeSnippet[data-name]:hover:before {
+    display: none;
+}
+
+.codeSnippet[data-name][id="exampleCode"]::before {
+    right: 8px;
+}
