@@ -33,7 +33,8 @@ export const api: MainAPI = (window as BridgedWindow).mainAPI.api;
 
 // const defaultSaveLocation = api.defaultSaveLocation();
 
-api.ipcSend("checkForUpdates");
+// TODO: re-enabled update checks
+// api.ipcSend("checkForUpdates");
 
 let prefs: UserPrefs = deserialize<UserPrefs>(api.getPrefs(), UserPrefs);
 
@@ -121,12 +122,18 @@ export function showPage(pageID: string) {
 		return errorPopup(`Notes file ${pageID} could not be parsed`, e.toString());
 	}
 
+	// TODO: clear current Editor content
+
 	for(const section of currentPage.content) {
-		if(section.type == NotebookItemSectionType.TEXT) {
-			// 
-		}
+		// if(section.type == NotebookItemSectionType.TEXT) {
+		// 	// 
+		// }
+		const contentSrc = $(`<div id="${section.id}"></div>`).text(validatorEscape(section.source));
+		// const contentSrc = document.createElement("div").innerText = ;
+		query("#pageContent").append(contentSrc);
 	}
-	query("#Editor").text(`Editor for ${validatorEscape(currentPage.skeleton.name)}`);
+	query("#pageTitle").text(`Editor for ${validatorEscape(currentPage.skeleton.name)}`); // TODO: change this to page path (parentOfParent > parentOfPage > pageName)
+	// TODO: split pageTitle into two parts, path and title (path is less the prominent "parentOfParent > parentOfPage >" and title is slightly larger and is only the pageName)
 	console.log(currentPage);
 
 	showScreen("Editor");

@@ -72,9 +72,10 @@ export class NotebookItem {
 	@JsonProperty({ required: false })
 	expanded = false;
 
-	@JsonProperty({ type: NotebookItemSkeleton, required: true })
+	@JsonProperty({ required: true })
 	skeleton: NotebookItemSkeleton = { id: "", name: "", fileName: "", children: [] };
 
+	@JsonProperty()
 	content: NotebookItemSection[] = [];
 
 	constructor(name: string) {

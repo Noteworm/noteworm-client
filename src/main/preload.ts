@@ -273,7 +273,8 @@ window.addEventListener("DOMContentLoaded", () => {
 		const titlebar = new Titlebar({
 			backgroundColor: Color.fromHex("#343A40"),
 			unfocusEffect: true,
-			icon: "../assets/icons/icon.ico"
+			icon: "../assets/icons/icon.ico",
+			overflow: "hidden"
 		});
 
 		ipcRenderer.on("updateMenubar", () => {

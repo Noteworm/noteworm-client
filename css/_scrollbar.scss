@@ -1,13 +1,16 @@
 .scroll-enabled {
-    overflow: scroll;
+    overflow: auto;
     // height: 1000px; /* define your custom height */
 }
 
 .scroll-enabled::-webkit-scrollbar {
-    width: 20px;
+    width: 1.5vw;
+    min-width: 15px;
+    max-width: 18px;
 }
 .scroll-enabled::-webkit-scrollbar-corner {
-    background: rgba(0,0,0,0);
+    // background: rgba(0, 0, 0, 0.385);
+    background: transparent;
 }
 .scroll-enabled::-webkit-scrollbar-thumb {
     background-color: #ccc;
@@ -18,7 +21,8 @@
     min-height: 32px;
 }
 .scroll-enabled::-webkit-scrollbar-track {
-    background-color: rgba(0,0,0,0);
+    // background-color: rgba(0, 0, 0, 0.385);
+    background-color: transparent;
 }
 
 // *::-webkit-scrollbar-track {

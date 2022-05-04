@@ -63,7 +63,7 @@
             <div id="content" class="scroll-enabled">
 
                 <div class="screen" id="Home">
-                    <span class="title">Home</span><br />
+                    <div class="title">Home</div>
                     <div class="card">
                         <div class="card-header">
                             <div class="card-title">Thank you for using Noteworm</div>
@@ -78,11 +78,11 @@
                 </div>
 
                 <div class="screen" id="Help">
-                    <span class="title">Help</span><br />
+                    <div class="title">Help</div>
                 </div>
 
                 <div class="screen" id="Settings">
-                    <span class="title">Settings</span><br />
+                    <div class="title">Settings</div>
 
                     <div class="container-content">
                         <button class="button" onclick="renderer.api.ipcSend('checkForUpdates')">Check For
@@ -91,7 +91,10 @@
                 </div>
 
                 <div class="screen" id="Editor">
-                    EDITOR
+                    <div id="pageTitle" class="title">Editor</div>
+                    <div id="pageContentContainer" class="scroll-enabled">
+                        <div id="pageContent"></div>
+                    </div>
                 </div>
 
             </div>

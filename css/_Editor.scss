@@ -1,0 +1,31 @@
+#Editor {
+    display: flex;
+    flex-direction: column;
+
+    #pageTitle {
+        font-size: 3.5em;
+        font-weight: 600;
+        position: sticky;
+        top: 0;
+        // width: fit-content;
+        background-color: var(--main-bg);
+
+        transition: font-size 0.5s ease-in-out;
+
+        &.scrolled {
+            font-size: 1.5em;
+        }
+    }
+
+    #pageContentContainer {
+        // margin-top: 1.5em;
+        // height: 100%;
+        flex-grow: 1;
+    }
+
+    #pageContent {
+        // margin-top: 1.5em;
+        padding-bottom: 800px;
+        margin-bottom: 800px;
+    }
+}
