@@ -21,9 +21,7 @@
         <link id="customStylesheetLink" rel="stylesheet">
     </head>
 
-
     <body style="height: 100%">
-
         <div id="main">
             <div id="sidebar">
                 <div id="sidebar-main" class="sidebar-section">
@@ -52,14 +50,14 @@
                         <span id="updateBlockText">New update available</span>
                     </li>
                 </div>
-                <div id="sidebar-items" class="sidebar-section">
-                    <li class="sidebar-item sidebar-link" onclick="renderer.showPage('abc')" data-links-to="abc">abc
-                    </li>
+                <div id="sidebar-page-items" class="sidebar-section">
+                    <!-- <li class="sidebar-item sidebar-link" onclick="renderer.showPage('abc')" data-links-to="abc">abc</li>
                     <li class="sidebar-item sidebar-link" onclick="renderer.showPage('unique_ID_of_page_2')"
-                        data-links-to="unique_ID_of_page_2">Page 2</li>
+                        data-links-to="unique_ID_of_page_2">Page 2</li> -->
                 </div>
             </div>
             <div id="sidebar-toggle" onclick="renderer.toggleSidebar();"><i data-feather="chevrons-left"></i></div>
+            <div id="sidebarResizer"></div>
             <div id="content" class="scroll-enabled">
 
                 <div class="screen" id="Home">
@@ -85,7 +83,7 @@
                     <div class="title">Settings</div>
 
                     <div class="container-content">
-                        <button class="button" onclick="renderer.api.ipcSend('checkForUpdates')">Check For
+                        <button class="button updateCheck" onclick="renderer.checkForUpdates()">Check For
                             Updates</button>
                     </div>
                 </div>
@@ -99,6 +97,17 @@
 
             </div>
         </div>
+
+        <div id="notificationContainer">
+        </div>
+
+
+        <!-- Notebook Context Menu -->
+        <div class="context-menu">
+
+        </div>
+        <!-- END Notebook Context Menu -->
+
 
         <!-- NEW PAGE MODAL -->
         <!-- <div id="newPageModal" class="modal">
@@ -166,7 +175,7 @@
                 <div class="modal-content modal-lg" style="max-height: 600px;">
                     <div class="modal-header">
                         <!-- VERSION CHANGE NOTICE -->
-                        <h4 class="modal-title" id="whatsNewModalTitle">What's new - Version 2.0.0</h4>
+                        <h4 class="modal-title" id="whatsNewModalTitle">What's new - Version 1.0.0</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -190,13 +199,13 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        It looks like this is the first time you're using Codex.<br><br>
-                        Click Continue if you would like to see a short guide about how to use Codex.
+                        It looks like this is the first time you're using Noteworm.<br><br>
+                        Click Continue if you would like to see a short guide about how to use Noteworm.
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="mybtn" data-dismiss="modal">No thanks</button>
                         <button type="button" class="mybtn-primary" data-dismiss="modal"
-                                onclick="console.log('Implement Help thingy');">Continue</button>
+                                onclick="console.log('TODO: Implement Help thingy');">Continue</button>
                     </div>
                 </div>
             </div>

@@ -38,7 +38,7 @@ The "build" section inside the ``package.json`` file is used to configure this.
 
 ## Screenshot
 
-<!-- ![Screenshot](https://codexnotes.com/img/main2.png) -->
+<!-- ![Screenshot](url) -->
 To be taken and uploaded...
 
 ## License

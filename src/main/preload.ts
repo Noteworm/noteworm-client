@@ -1,4 +1,4 @@
-import { contextBridge, ipcRenderer, IpcRendererEvent, shell } from "electron";
+import { contextBridge, ipcRenderer, IpcRendererEvent, shell, clipboard } from "electron";
 import * as fs from "fs";
 import * as remote from "@electron/remote";
 import { Titlebar, Color } from "@treverix/custom-electron-titlebar";
@@ -34,16 +34,20 @@ export type MainAPI = {
 	ipcSendSync(channel: string, ...args: any[]): any;
 	defaultSaveLocation(): string;
 	saveLocation(): string;
-	getPrefs(): string;
+	getPrefs(): UserPrefs;
 	savePrefs(prefsObj: UserPrefs): void;
-	getSave(): string;
+	getSave(): Save;
 	saveData(saveObj: Save): void;
-	loadPageData(fileName: string): string;
+	loadPageData(fileName: string): NotebookItem;
+	savePage(page : NotebookItem) : void;
 	savePageData(fileName: string, docObject: { [key: string]: any }): void;
 	openSaveLocation(): void;
 	changeSaveLocation(): void;
 	revertToDefaultSaveLocation(): void;
 	openLink(link: "website" | "download" | "docs" | "changelogs" | "github" | "issues" | "feedback" | "feather"): void;
+
+	writeClipboard(text : string): void;
+	readClipboard(): string;
 };
 
 const api: MainAPI = {
@@ -71,8 +75,8 @@ const api: MainAPI = {
 		return saveLocation;
 	},
 
-	getPrefs: (): string => {
-		return JSON.stringify(prefs);
+	getPrefs: (): UserPrefs => {
+		return deserialize<UserPrefs>(JSON.stringify(prefs), UserPrefs);
 	},
 
 	savePrefs: (prefsObj: UserPrefs): void => {
@@ -82,8 +86,8 @@ const api: MainAPI = {
 		}
 	},
 
-	getSave: (): string => {
-		return JSON.stringify(save);
+	getSave: (): Save => {
+		return deserialize<Save>(JSON.stringify(save), Save);
 	},
 
 	saveData: (saveObj: Save): void => {
@@ -93,13 +97,19 @@ const api: MainAPI = {
 		}
 	},
 
-	loadPageData: (fileName: string): string => {
+	loadPageData: (fileName: string): NotebookItem => {
 		if (!fileName.includes("/") && !fileName.includes("\\")) {
 			if (fs.existsSync(saveLocation + "/notes/" + fileName)) {
-				return fs.readFileSync(saveLocation + "/notes/" + fileName, "utf-8").toString();
+				return deserialize<NotebookItem>(fs.readFileSync(saveLocation + "/notes/" + fileName, "utf-8").toString(), NotebookItem);
 			}
 		}
-		return "";
+		return null;
+	},
+
+	savePage: (page : NotebookItem): void => {
+		if (!page.skeleton.fileName.includes("/") && !page.skeleton.fileName.includes("\\") && canSaveData == true) {
+			fs.writeFileSync(saveLocation + "/notes/" + page.skeleton.fileName, JSON.stringify(page), "utf-8");
+		}
 	},
 
 	savePageData: (fileName: string, docObject: { [key: string]: any }): void => {
@@ -159,6 +169,14 @@ const api: MainAPI = {
 				shell.openExternal("https://creativecommons.org/licenses/by-nc/4.0/");
 				break;
 		}
+	},
+
+	writeClipboard(text : string) : void {
+		clipboard.writeText(text);
+	},
+
+	readClipboard() : string {
+		return clipboard.readText();
 	}
 };
 
@@ -195,7 +213,7 @@ if (compare(version, prefs.lastUseVersion) == 1) {
 if (fs.existsSync(saveLocation + "/save.json")) {
 	const json = fs.readFileSync(saveLocation + "/save.json", "utf-8").toString();
 
-	// Check for old save from before 2.0.0
+	// Check for old save
 	try {
 		const testObject = JSON.parse(json);
 		if (testObject["version"] === undefined) {
@@ -243,7 +261,7 @@ if (!fs.existsSync(saveLocation + "/notes/")) {
 if (!fs.existsSync(defaultSaveLocation + "/userStyles.css")) {
 	fs.writeFileSync(
 		defaultSaveLocation + "/userStyles.css",
-		"/*\n    Enter custom CSS rules for Codex in this file.\n    Use Inspect Element in the DevTools (Ctrl-Shift-I) in Codex to find id's and classes.\n*/"
+		"/*\n    Enter custom CSS rules for Noteworm in this file.\n    Use Inspect Element in the DevTools (Ctrl-Shift-I) in Noteworm to find id's and classes.\n*/"
 	);
 }
 

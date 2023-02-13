@@ -82,7 +82,7 @@ function createWindow() {
 		},
 		icon: path.join(__dirname, iconPath),
 		show: false,
-		title: "Codex"
+		title: "Noteworm"
 	});
 
 	// Enable @electron/remote in preload so we can
@@ -271,11 +271,11 @@ normalMenu.append(
 			{
 				label: "Help",
 				accelerator: "F1",
-				click: () => shell.openExternal("https://www.codexnotes.com/docs/")
+				click: () => shell.openExternal("https://Noteworm.github.io/docs/")
 			},
 			{
 				label: "Website",
-				click: () => shell.openExternal("https://www.codexnotes.com/")
+				click: () => shell.openExternal("https://Noteworm.github.io/")
 			},
 			{
 				label: "What's New",
@@ -283,11 +283,11 @@ normalMenu.append(
 			},
 			{
 				label: "All Changelogs",
-				click: () => shell.openExternal("https://www.codexnotes.com/updates/")
+				click: () => shell.openExternal("https://Noteworm.github.io/updates/")
 			},
 			{
 				label: "Give Feedback (Google Forms)",
-				click: () => shell.openExternal("https://forms.gle/uDLJpqLbNLcEx1F8A")
+				click: () => shell.openExternal("https://forms.gle/spa9b6EPwBfVs46YA")
 			},
 			{
 				type: "separator"
@@ -416,11 +416,11 @@ editingMenu.append(
 			{
 				label: "Help",
 				accelerator: "F1",
-				click: () => shell.openExternal("https://www.codexnotes.com/docs/")
+				click: () => shell.openExternal("https://Noteworm.github.io/docs/")
 			},
 			{
 				label: "Website",
-				click: () => shell.openExternal("https://www.codexnotes.com/")
+				click: () => shell.openExternal("https://Noteworm.github.io/")
 			},
 			{
 				label: "What's New",
@@ -428,11 +428,11 @@ editingMenu.append(
 			},
 			{
 				label: "All Changelogs",
-				click: () => shell.openExternal("https://www.codexnotes.com/updates/")
+				click: () => shell.openExternal("https://Noteworm.github.io/updates/")
 			},
 			{
 				label: "Give Feedback (Google Forms)",
-				click: () => shell.openExternal("https://forms.gle/uDLJpqLbNLcEx1F8A")
+				click: () => shell.openExternal("https://forms.gle/spa9b6EPwBfVs46YA")
 			},
 			{
 				type: "separator"

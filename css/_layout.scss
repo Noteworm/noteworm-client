@@ -1,4 +1,3 @@
-
 #main {
     height: 100%;
     width: 100%;
@@ -41,6 +40,23 @@
         color: var(--hover-fg);
         background-color: var(--hover-bg);
         cursor: pointer;
+    }
+}
+
+#sidebarResizer {
+    color: var(--main-fg);
+    position: relative;
+    top: 0;
+    // left: var(--sidebar-width);
+    left: 0;
+    height: 100%;
+    width: 10px;
+    z-index: 999;
+
+    &:hover {
+        color: var(--hover-fg);
+        background-color: var(--hover-bg);
+        cursor:col-resize;
     }
 }
 
@@ -97,16 +113,16 @@
     // margin-top: 1vw;
     margin-left: calc(var(--sidebar-toggle-padding) * 2 + var(--sidebar-toggle-margin) * 2 + var(--feather-size));
     margin-right: calc(var(--sidebar-toggle-padding) * 2 + var(--sidebar-toggle-margin) * 2 + var(--feather-size));
-    overflow:hidden;
-    height:100%;
+    overflow: hidden;
+    height: 100%;
     // padding-bottom: 10vh;
 }
 
 .screen {
-    height:100%;
+    height: 100%;
 }
 
-.container-content{
+.container-content {
     margin-top: 2vh;
 }
 

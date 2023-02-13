@@ -1,10 +1,16 @@
 import { MainAPI } from "../main/preload";
-import validatorEscape from "validator/es/lib/escape";
+import validatorEscape from "validator/es/lib/escape"; // jquery text() func does this for you
 import * as feather from "feather-icons";
+import { v4 as GenerateUUID } from "uuid";
 import { Save } from "../common/Save";
-import { NotebookItem, NotebookItemSection, NotebookItemSectionType } from "../common/NotebookItem";
+import {
+	NotebookItem,
+	NotebookItemSection,
+	NotebookItemSectionType,
+	NotebookItemSkeleton
+} from "../common/NotebookItem";
 import { UserPrefs } from "../common/UserPrefs";
-import { deserialize } from "typescript-json-serializer";
+// import { deserialize } from "typescript-json-serializer";
 
 import "./styles";
 
@@ -14,11 +20,9 @@ import "./styles";
 // JQuery $("") wrapper to output an error if it doesn't find an element
 function query(text: string): JQuery<HTMLElement> {
 	const result = $(text);
-
-	if (result.length === 0) {
+	if (!result.length) {
 		console.error(`JQuery search for '${text}' did not find an element.`);
 	}
-
 	return result;
 }
 
@@ -31,19 +35,27 @@ type BridgedWindow = Window &
 
 export const api: MainAPI = (window as BridgedWindow).mainAPI.api;
 
-// const defaultSaveLocation = api.defaultSaveLocation();
+const defaultSaveLocation = api.defaultSaveLocation();
 
 // TODO: re-enabled update checks
 // api.ipcSend("checkForUpdates");
 
-let prefs: UserPrefs = deserialize<UserPrefs>(api.getPrefs(), UserPrefs);
-
-let save: Save = deserialize<Save>(api.getSave(), Save);
+const prefs: UserPrefs = api.getPrefs();
+const save: Save = api.getSave();
 
 let currentPage: NotebookItem;
 
-console.log(prefs);
-console.log(save);
+// load prefs
+
+if (prefs.defaultMaximized) {
+	api.ipcSend("maximize");
+}
+
+resizeSidebar(prefs.sidebarWidth);
+
+// load custom user styles
+(document.getElementById("customStylesheetLink") as HTMLLinkElement).href =
+	"file:///" + defaultSaveLocation + "/userStyles.css";
 
 if (api.showFirstUseModal) {
 	setTimeout(() => {
@@ -81,6 +93,55 @@ export function toggleSidebar(forceState?: boolean): void {
 	}
 }
 
+export function resizeSidebar(width: number): void {
+	if (width >= 200 && width <= 600) {
+		prefs.sidebarWidth = width;
+
+		if (document.documentElement.style.getPropertyValue("--sidebar-width") != "0px") {
+			document.documentElement.style.setProperty("--sidebar-width", `${width}px`);
+		}
+	}
+}
+
+function handleSidebarResizerDrag(event: MouseEvent): void {
+	resizeSidebar(event.clientX);
+}
+
+const sidebarResizer = document.getElementById("sidebarResizer");
+sidebarResizer.addEventListener("mousedown", () => {
+	window.addEventListener("mousemove", handleSidebarResizerDrag, false);
+	window.addEventListener(
+		"mouseup",
+		() => {
+			window.removeEventListener("mousemove", handleSidebarResizerDrag, false);
+		},
+		false
+	);
+});
+
+export function getSelection() : Selection {
+	return window.getSelection();
+}
+
+export function getSelectionText() : string {
+	return window.getSelection().toString();
+}
+
+export function setSelectionText(text : string) : void {
+	const sel = window.getSelection();
+	const range = sel.getRangeAt(0);
+	range.deleteContents();
+	range.insertNode(document.createTextNode(text));
+}
+
+export function setSelectionHtml(htmlString : string) : void {
+	const sel = window.getSelection();
+	const range = sel.getRangeAt(0);
+	range.deleteContents();
+	const frag = range.createContextualFragment(htmlString);
+	range.insertNode(frag);
+}
+
 export function errorPopup(message: string, detail: string) {
 	api.ipcSend("errorPopup", message, detail);
 }
@@ -109,47 +170,109 @@ export function showScreen(screenName: string): void {
 
 showScreen("Home");
 
+export function createNotification(title: string, body: string, timeout: number) {
+	// TODO: timeout bar across bottom
+	// TODO: pause timer on hover
+	// TODO: instant close when cross clicked
+	// TODO: Custom action when notification body/title pressed
+
+	const id = GenerateUUID();
+	const template = `
+		<div class="notification-header">
+			<div class="notification-title">${validatorEscape(title)}</div>
+			<div class="notification-exit">&times;</div>
+		</div>
+		<div class="notification-body">
+			${validatorEscape(body)}
+		</div>`;
+	const notification = $(`<div class="notification" id="${id}"></div>`);
+	notification.html(template);
+	notification.hide();
+	query("#notificationContainer").append(notification);
+	notification.fadeIn("fast");
+	setTimeout(() => {
+		notification.fadeOut(() => {
+			notification.detach();
+		});
+	}, timeout * 1000);
+}
+
+export function refreshPageList() {
+	query("#sidebar-page-items").empty();
+
+	save.pages.children.forEach((pageSkeleton) => {
+		const sidebarItem = $(
+			`<li class="sidebar-item sidebar-link" onclick="renderer.showPage('${pageSkeleton.id}')" data-links-to="${pageSkeleton.id}"></li>`
+		).text(pageSkeleton.name);
+		query("#sidebar-page-items").append(sidebarItem);
+		sidebarItem.on("contextmenu", (e) => {
+			console.log(`Context menu on ${pageSkeleton.name}#${pageSkeleton.id}`);
+			e.preventDefault();
+			// TODO: open correct context menu
+		});
+		// This only does top level
+		// TODO: Some recursive child looping thingy to list all the pages and each of their children and so on
+	});
+}
+
+refreshPageList();
+
 export function saveCurrentPage() {
-	// TODO: save current page;
+	if (currentPage) {
+		api.savePage(currentPage);
+	}
 }
 
 export function showPage(pageID: string) {
 	saveCurrentPage();
 
 	try {
-		currentPage = deserialize<NotebookItem>(api.loadPageData(`${pageID}.json`), NotebookItem);
+		currentPage = api.loadPageData(`${pageID}.json`);
 	} catch (e) {
 		return errorPopup(`Notes file ${pageID} could not be parsed`, e.toString());
 	}
 
-	// TODO: clear current Editor content
+	query("#pageContent").empty();
 
-	for(const section of currentPage.content) {
+	for (const section of currentPage.content) {
 		// if(section.type == NotebookItemSectionType.TEXT) {
-		// 	// 
+		// 	//
 		// }
-		const contentSrc = $(`<div id="${section.id}"></div>`).text(validatorEscape(section.source));
-		// const contentSrc = document.createElement("div").innerText = ;
+		const contentSrc = $(`<div id="${section.id} class="page-section type-${section.type}"></div>`);
+		contentSrc.text(section.source);
+		contentSrc.attr("contenteditable", "true");
+		contentSrc.on("input", (e) => {
+			console.log("contents edited");
+			// console.log(e);
+		});
+		contentSrc.on("paste", (event) => {
+			// TODO: custom pasting (paste raw text or new image etc)
+			// use "clipboard" made available through API
+		});
+
 		query("#pageContent").append(contentSrc);
 	}
-	query("#pageTitle").text(`Editor for ${validatorEscape(currentPage.skeleton.name)}`); // TODO: change this to page path (parentOfParent > parentOfPage > pageName)
+	query("#pageTitle").text(`Editor for ${currentPage.skeleton.name}`); // TODO: change this to page path (parentOfParent > parentOfPage > pageName)
 	// TODO: split pageTitle into two parts, path and title (path is less the prominent "parentOfParent > parentOfPage >" and title is slightly larger and is only the pageName)
 	console.log(currentPage);
 
 	showScreen("Editor");
 	document.querySelectorAll(".sidebar-link").forEach((elt) => elt.classList.remove("active"));
 	document.querySelectorAll(`[data-links-to="${pageID}"]`).forEach((elt) => elt.classList.add("active"));
+	query("#pageContentContainer").scrollTop(0);
+}
+
+export function checkForUpdates() {
+	if (query(".updateCheck").hasClass("disabled")) {
+		return;
+	}
+	createNotification("Updates", "Checking for updates, please wait...", 10);
+	query(".updateCheck").addClass("disabled");
+	api.ipcSend("checkForUpdates");
+	setTimeout(() => query(".updateCheck").removeClass("disabled"), 10 * 1000);
 }
 
 // #region IPC HANDLERS
-
-// api.ipcHandle("updateAvailable", (event: any, newVersion: string) => {
-// 	setTimeout(() => {
-// 		query("#updateBlockText").text(`Update available (${newVersion})`);
-// 		query("#updateIconContainer").css({ color: "yellow" }).html(feather.icons["download"].toSvg());
-// 		query("#updateSidebarNotice").fadeIn();
-// 	}, 1000);
-// });
 
 api.ipcHandle("updateChecked", (event, version) => {
 	setTimeout(() => {
